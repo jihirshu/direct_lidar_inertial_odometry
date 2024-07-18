@@ -12,20 +12,20 @@
 
 /**:
   ros__parameters:
-    use_sim_time: true
+    use_sim_time: false
     frames/odom: odom
-    frames/baselink: base_link
-    frames/lidar: lidar
-    frames/imu: imu
+    frames/baselink: slam_base_link
+    frames/lidar: livox_frame
+    frames/imu: livox_frame
 
-    map/waitUntilMove: true
+    map/waitUntilMove: false
     map/dense/filtered: false
     map/sparse/leafSize: 0.25
 
     odom/gravity: 9.80665
     odom/computeTimeOffset: true
 
-    odom/imu/approximateGravity: false
+    odom/imu/approximateGravity: true
     odom/imu/calibration/gyro: true
     odom/imu/calibration/accel: true
     odom/imu/calibration/time: 3.0

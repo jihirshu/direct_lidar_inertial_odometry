@@ -28,10 +28,10 @@
     imu/intrinsics/gyro/bias: [ 0.0, 0.0, 0.0 ]
 
     extrinsics/baselink2imu/t: [ 0., 0., 0. ]
-    extrinsics/baselink2imu/R: [ -1.,  0.,  0.,
+    extrinsics/baselink2imu/R: [ 1.,  0.,  0.,
                                   0.,  1.,  0.,
-                                  0.,  0.,  -1. ]
-    extrinsics/baselink2lidar/t: [ 0.,  0.,  0. ]
-    extrinsics/baselink2lidar/R: [ 1.,  0.,  0.,
-                                   0.,  1.,  0.,
-                                   0.,  0.,  1. ]
+                                  0.,  0.,  1. ]
+    extrinsics/baselink2lidar/t: [ 0.000, -0.008, 0.026 ]
+    extrinsics/baselink2lidar/R: [ 0.9999660,  0.0019599, -0.0080097,
+                                   -0.0020399,  0.9999480, -0.0099916,
+                                   0.0079897,  0.0100076,  0.9999180 ]

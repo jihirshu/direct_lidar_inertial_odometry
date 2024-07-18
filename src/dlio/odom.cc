@@ -1078,8 +1078,8 @@ void dlio::OdomNode::callbackImu(const sensor_msgs::msg::Imu::SharedPtr imu_raw)
   }
   else
   {
-    
-    double dt = imu->header.stamp - this->prev_imu_stamp;
+    rclcpp::Time timestamp(imu->header.stamp);
+    double dt = timestamp.seconds() - this->prev_imu_stamp;
     if (dt == 0)
     {
       dt = 1.0 / 200.0;
@@ -1113,7 +1113,7 @@ void dlio::OdomNode::callbackImu(const sensor_msgs::msg::Imu::SharedPtr imu_raw)
   }
 }
 
-void dlio::OdomNode::callbackLivox(const livox_ros_driver2::msg::CustomMsgConstPtr::SharedPtr livox)
+void dlio::OdomNode::callbackLivox(const livox_ros_driver2::msg::CustomMsg::SharedPtr livox)
 {
 
   // convert custom livox message to pcl pointcloud
@@ -1131,13 +1131,13 @@ void dlio::OdomNode::callbackLivox(const livox_ros_driver2::msg::CustomMsgConstP
   }
 
   // publish converted livox pointcloud
-  sensor_msgs::PointCloud2 cloud_ros;
+  sensor_msgs::msg::PointCloud2 cloud_ros;
   pcl::toROSMsg(*cloud, cloud_ros);
 
   cloud_ros.header.stamp = livox->header.stamp;
-  cloud_ros.header.seq = livox->header.seq;
+  
   cloud_ros.header.frame_id = this->lidar_frame;
-  this->livox_pub.publish(cloud_ros);
+  this->livox_pub->publish(cloud_ros);
 }
 
 void dlio::OdomNode::getNextPose()

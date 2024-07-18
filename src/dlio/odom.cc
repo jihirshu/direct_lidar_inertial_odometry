@@ -1078,8 +1078,8 @@ void dlio::OdomNode::callbackImu(const sensor_msgs::msg::Imu::SharedPtr imu_raw)
   }
   else
   {
-
-    double dt = imu->header.stamp.toSec() - this->prev_imu_stamp;
+    
+    double dt = imu->header.stamp - this->prev_imu_stamp;
     if (dt == 0)
     {
       dt = 1.0 / 200.0;
@@ -1113,7 +1113,7 @@ void dlio::OdomNode::callbackImu(const sensor_msgs::msg::Imu::SharedPtr imu_raw)
   }
 }
 
-void dlio::OdomNode::callbackLivox(const livox_ros_driver2::CustomMsgConstPtr &livox)
+void dlio::OdomNode::callbackLivox(const livox_ros_driver2::msg::CustomMsgConstPtr::SharedPtr livox)
 {
 
   // convert custom livox message to pcl pointcloud

@@ -32,6 +32,10 @@
 #include <sys/times.h>
 #include <thread>
 
+// #include "direct_lidar_inertial_odometry/srv/save_pcd.hpp"
+// #include <livox_interfaces2/msg/custom_msg.hpp>
+#include <livox_ros_driver2/msg/custom_msg.hpp>
+
 template <typename T>
 std::string to_string_with_precision(const T a_value, const int n = 6)
 {
@@ -49,8 +53,6 @@ std::string to_string_with_precision(const T a_value, const int n = 6)
 
 // DLIO
 #include <nano_gicp/nano_gicp.h>
-#include <direct_lidar_inertial_odometry/save_pcd.h>
-#include <livox_ros_driver2/CustomMsg.h>
 
 namespace dlio
 {

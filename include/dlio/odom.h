@@ -55,7 +55,7 @@ private:
 
   void callbackPointCloud(const sensor_msgs::msg::PointCloud2::SharedPtr pc);
   void callbackImu(const sensor_msgs::msg::Imu::SharedPtr imu);
-  void callbackLivox(const livox_ros_driver2::msg::CustomMsg livox);
+  void callbackLivox(const livox_ros_driver2::msg::CustomMsg::SharedPtr livox);
 
   void publishPose();
 

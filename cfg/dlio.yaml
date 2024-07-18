@@ -13,7 +13,7 @@
 /**:
   ros__parameters:
 
-    version: 1.1.1
+  version: 1.2.0
 
     adaptive: true
 
@@ -21,6 +21,7 @@
     pointcloud/voxelize: true
 
     imu/calibration: true
+    imu/normalized: true
     imu/intrinsics/accel/bias: [ 0.0, 0.0, 0.0 ]
     imu/intrinsics/accel/sm:   [ 1.,  0.,  0.,
                                  0.,  1.,  0.,

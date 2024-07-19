@@ -11,6 +11,7 @@
  ***********************************************************/
 
 #include "dlio/dlio.h"
+#include "direct_lidar_inertial_odometry/srv/save_pcd.hpp"
 
 // ROS
 #include "rclcpp/rclcpp.hpp"
@@ -58,6 +59,8 @@ private:
   void callbackLivox(const livox_ros_driver2::msg::CustomMsg::SharedPtr livox);
 
   void publishPose();
+  void savePCD(std::shared_ptr<direct_lidar_inertial_odometry::srv::SavePCD::Request> req,
+               std::shared_ptr<direct_lidar_inertial_odometry::srv::SavePCD::Response> res);
 
   void publishToROS(pcl::PointCloud<PointType>::ConstPtr published_cloud, Eigen::Matrix4f T_cloud);
   void publishCloud(pcl::PointCloud<PointType>::ConstPtr published_cloud, Eigen::Matrix4f T_cloud);
@@ -99,6 +102,7 @@ private:
   void computeDensity();
 
   sensor_msgs::msg::Imu::SharedPtr transformImu(const sensor_msgs::msg::Imu::SharedPtr &imu);
+  rclcpp::Service<direct_lidar_inertial_odometry::srv::SavePCD>::SharedPtr save_pcd_srv;
 
   void updateKeyframes();
   void computeConvexHull();
@@ -205,6 +209,7 @@ private:
   std::condition_variable submap_build_cv;
   bool main_loop_running;
   std::mutex main_loop_running_mutex;
+  bool save_deskewed_map;
 
   // Timestamps
   rclcpp::Time scan_header_stamp;

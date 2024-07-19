@@ -32,8 +32,6 @@
 #include <sys/times.h>
 #include <thread>
 
-// #include "direct_lidar_inertial_odometry/srv/save_pcd.hpp"
-// #include <livox_interfaces2/msg/custom_msg.hpp>
 #include <livox_ros_driver2/msg/custom_msg.hpp>
 
 template <typename T>

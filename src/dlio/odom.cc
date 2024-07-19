@@ -24,6 +24,7 @@ dlio::OdomNode::OdomNode() : Node("dlio_odom_node")
 
   this->num_threads_ = omp_get_max_threads();
 
+  this->save_deskewed_map = false;
   this->dlio_initialized = false;
   this->first_valid_scan = false;
   this->first_imu_received = false;
@@ -50,7 +51,8 @@ dlio::OdomNode::OdomNode() : Node("dlio_odom_node")
   imu_sub_opt.callback_group = this->imu_cb_group;
   this->imu_sub = this->create_subscription<sensor_msgs::msg::Imu>("imu", rclcpp::SensorDataQoS(),
                                                                    std::bind(&dlio::OdomNode::callbackImu, this, std::placeholders::_1), imu_sub_opt);
-
+  this->save_pcd_srv = this->create_service<direct_lidar_inertial_odometry::srv::SavePCD>("save_deskewed_pcd",
+                                                                                          std::bind(&dlio::OdomNode::savePCD, this, std::placeholders::_1, std::placeholders::_2), rmw_qos_profile_services_default);
   this->odom_pub = this->create_publisher<nav_msgs::msg::Odometry>("odom", 1);
   this->pose_pub = this->create_publisher<geometry_msgs::msg::PoseStamped>("pose", 1);
   this->path_pub = this->create_publisher<nav_msgs::msg::Path>("path", 1);
@@ -378,6 +380,12 @@ void dlio::OdomNode::publishPose()
   this->pose_pub->publish(this->pose_ros);
 }
 
+void dlio::OdomNode::savePCD(std::shared_ptr<direct_lidar_inertial_odometry::srv::SavePCD::Request> req,
+                             std::shared_ptr<direct_lidar_inertial_odometry::srv::SavePCD::Response> res)
+{
+  this->save_deskewed_map = true;
+}
+
 void dlio::OdomNode::publishToROS(pcl::PointCloud<PointType>::ConstPtr published_cloud, Eigen::Matrix4f T_cloud)
 {
   this->publishCloud(published_cloud, T_cloud);
@@ -474,6 +482,21 @@ void dlio::OdomNode::publishCloud(pcl::PointCloud<PointType>::ConstPtr published
   deskewed_ros.header.stamp = this->scan_header_stamp;
   deskewed_ros.header.frame_id = this->odom_frame;
   this->deskewed_pub->publish(deskewed_ros);
+  if (this->save_deskewed_map)
+  {
+    pcl::VoxelGrid<pcl::PointXYZ> vg;
+    pcl::PCLPointCloud2 pcl_pc2;
+    pcl_conversions::toPCL(deskewed_ros, pcl_pc2);
+    pcl::PointCloud<pcl::PointXYZ>::Ptr pcl_cloud(new pcl::PointCloud<pcl::PointXYZ>);
+    pcl::fromPCLPointCloud2(pcl_pc2, *pcl_cloud);
+    vg.setLeafSize(0.01, 0.01, 0.01);
+    vg.setInputCloud(pcl_cloud);
+    vg.filter(*pcl_cloud);
+
+    // save map
+    int ret = pcl::io::savePCDFileBinary("/home/jihirshu/Desktop/dlio_map.pcd", *pcl_cloud);
+    this->save_deskewed_map = false;
+  }
 }
 
 void dlio::OdomNode::publishKeyframe(std::pair<std::pair<Eigen::Vector3f, Eigen::Quaternionf>, pcl::PointCloud<PointType>::ConstPtr> kf, rclcpp::Time timestamp)
@@ -1135,7 +1158,7 @@ void dlio::OdomNode::callbackLivox(const livox_ros_driver2::msg::CustomMsg::Shar
   pcl::toROSMsg(*cloud, cloud_ros);
 
   cloud_ros.header.stamp = livox->header.stamp;
-  
+
   cloud_ros.header.frame_id = this->lidar_frame;
   this->livox_pub->publish(cloud_ros);
 }

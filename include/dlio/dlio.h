@@ -32,8 +32,6 @@
 #include <sys/times.h>
 #include <thread>
 
-#include <livox_ros_driver2/msg/custom_msg.hpp>
-
 template <typename T>
 std::string to_string_with_precision(const T a_value, const int n = 6)
 {

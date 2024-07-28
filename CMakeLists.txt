@@ -54,7 +54,7 @@ add_library(nanoflann STATIC
   src/nano_gicp/nanoflann.cc
 )
 target_link_libraries(nanoflann ${PCL_LIBRARIES})
-ament_target_dependencies(nanoflann "livox_ros_driver2")
+ament_target_dependencies(nanoflann)
 
 # NanoGICP
 add_library(nano_gicp STATIC
@@ -62,7 +62,7 @@ add_library(nano_gicp STATIC
   src/nano_gicp/nano_gicp.cc
 )
 target_link_libraries(nano_gicp ${PCL_LIBRARIES} ${OpenMP_LIBS} nanoflann)
-ament_target_dependencies(nano_gicp "livox_ros_driver2")
+ament_target_dependencies(nano_gicp)
 
 # Odometry Node
 add_executable(dlio_odom_node src/dlio/odom_node.cc src/dlio/odom.cc)
@@ -72,7 +72,7 @@ ament_target_dependencies(dlio_odom_node "tf2_ros" "pcl_ros" "nav_msgs" "pcl_con
 # Mapping Node
 add_executable (dlio_map_node src/dlio/map_node.cc src/dlio/map.cc)
 target_link_libraries(dlio_map_node ${PCL_LIBRARIES}  ${cpp_typesupport_target})
-ament_target_dependencies(dlio_map_node "tf2_ros" "pcl_ros" "pcl_conversions" "rclcpp" "livox_ros_driver2")
+ament_target_dependencies(dlio_map_node "tf2_ros" "pcl_ros" "pcl_conversions" "rclcpp")
 
 ament_export_include_directories(include)
 ament_export_libraries(${PROJECT_NAME} nano_gicp nanoflann)

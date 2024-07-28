@@ -22,6 +22,7 @@
 #include <sensor_msgs/msg/imu.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
 #include <tf2_ros/transform_broadcaster.h>
+#include <livox_ros_driver2/msg/custom_msg.hpp>
 
 // BOOST
 #include <boost/format.hpp>

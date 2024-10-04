@@ -11,6 +11,7 @@
  ***********************************************************/
 
 #include "dlio/dlio.h"
+#include "direct_lidar_inertial_odometry/srv/save_pcd.hpp"
 
 // ROS
 #include "rclcpp/rclcpp.hpp"
@@ -21,6 +22,7 @@
 #include <sensor_msgs/msg/imu.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
 #include <tf2_ros/transform_broadcaster.h>
+#include <livox_ros_driver2/msg/custom_msg.hpp>
 
 // BOOST
 #include <boost/format.hpp>
@@ -56,8 +58,11 @@ private:
 
   void callbackPointCloud(const sensor_msgs::msg::PointCloud2::SharedPtr pc);
   void callbackImu(const sensor_msgs::msg::Imu::SharedPtr imu);
+  void callbackLivox(const livox_ros_driver2::msg::CustomMsg::SharedPtr livox);
 
   void publishPose();
+  void savePCD(std::shared_ptr<direct_lidar_inertial_odometry::srv::SavePCD::Request> req,
+               std::shared_ptr<direct_lidar_inertial_odometry::srv::SavePCD::Response> res);
 
   void publishToROS(pcl::PointCloud<PointType>::ConstPtr published_cloud, Eigen::Matrix4f T_cloud);
   void publishCloud(pcl::PointCloud<PointType>::ConstPtr published_cloud, Eigen::Matrix4f T_cloud);
@@ -97,6 +102,7 @@ private:
   void computeDensity();
 
   sensor_msgs::msg::Imu::SharedPtr transformImu(const sensor_msgs::msg::Imu::SharedPtr& imu);
+  rclcpp::Service<direct_lidar_inertial_odometry::srv::SavePCD>::SharedPtr save_pcd_srv;
 
   void updateKeyframes();
   void computeConvexHull();
@@ -113,6 +119,7 @@ private:
   // Subscribers
   rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr lidar_sub;
   rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr imu_sub;
+  rclcpp::Subscription<livox_ros_driver2::msg::CustomMsg>::SharedPtr livox_sub;
   rclcpp::CallbackGroup::SharedPtr lidar_cb_group, imu_cb_group;
 
   // Publishers
@@ -122,6 +129,7 @@ private:
   rclcpp::Publisher<geometry_msgs::msg::PoseArray>::SharedPtr kf_pose_pub;
   rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr kf_cloud_pub;
   rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr deskewed_pub;
+  rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr livox_pub;
 
   // TF
   std::shared_ptr<tf2_ros::TransformBroadcaster> br;
@@ -200,6 +208,7 @@ private:
   std::condition_variable submap_build_cv;
   bool main_loop_running;
   std::mutex main_loop_running_mutex;
+  bool save_deskewed_map;
 
   // Timestamps
   rclcpp::Time scan_header_stamp;
@@ -343,6 +352,7 @@ private:
   bool calibrate_gyro_;
   bool calibrate_accel_;
   bool gravity_align_;
+  bool imu_normalized_;
   double imu_calib_time_;
   int imu_buffer_size_;
   Eigen::Matrix3f imu_accel_sm_;
